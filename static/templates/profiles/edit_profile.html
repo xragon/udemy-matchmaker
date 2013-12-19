@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block jquery %}
+$('#myTab a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+	<ul class="messages">
+		{% for message in messages %}
+			<li {% if message.tags %} class="{{message.tags }}"{% endif %}>{{ message }}</li>
+		{% endfor %}
+	</ul>
+{% endif %}
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#home" data-toggle="tab">Edit</a></li>
+  <li><a href="#jobs" data-toggle="tab">Jobs</a></li>
+  <li><a href="#addresses" data-toggle="tab">Addresses</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div class="tab-pane active" id="home">
+  	<div class="row">
+  		<div class="col-md-12">
+	  		<form method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
+				{{ picture_form.as_p }}
+				<input class="btn btn-success" type="submit" value="Update" />
+			</form>
+		</div>
+	</div>
+  </div>
+  <div class="tab-pane" id="jobs">
+  	<div class="row">
+  		<div class="col-md-6">
+  			<ol>
+	  			{% for item in formset_j %}
+	  				{% if item.instance.position %}
+	  					<li>{{ item.instance.position }}, {{ item.instance.employer }}</li>
+	  				{% endif %}
+	  			{% endfor %}
+	  		</ol>
+  		</div>
+  		<div class="col-md-6">
+			<form method="POST" action="/edit/job"> {% csrf_token %}
+				{{ formset_j.as_p }}
+				<input class="btn btn-success" type="submit" value="Update" />
+			</form>
+		</div>
+	</div>
+  </div>
+  <div class="tab-pane" id="addresses">
+  	<div class="row">
+  		<div class="col-md-6">
+  			<ol>
+	  			{% for item in formset_a %}
+	  				{% if item.instance.street_address %}
+	  					<li>{{ item.instance.street_address }}, {{ item.instance.city }}</li>
+	  				{% endif %}
+	  			{% endfor %}
+	  		</ol>
+  		</div>
+  		<div class="col-md-6">
+	  		<form method="POST" action="/edit/address"> {% csrf_token %}
+	  			{{ formset_a.management_form }}
+				{{ formset_a.as_p }}
+				<input class="btn btn-success" type="submit" value="Update" />
+			</form>
+		</div>
+	</div>
+  </div>
+</div>
+
+
+{% endblock %}
